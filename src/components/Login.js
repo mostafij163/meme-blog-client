@@ -1,4 +1,4 @@
-import React, { useState, useContext} from 'react';
+import React, { useContext, useState, } from 'react';
 import clsx from 'clsx';
 import { makeStyles,} from '@material-ui/core/styles';
 import IconButton from '@material-ui/core/IconButton';
@@ -11,15 +11,15 @@ import TextField from '@material-ui/core/TextField';
 import Visibility from '@material-ui/icons/Visibility';
 import VisibilityOff from '@material-ui/icons/VisibilityOff';
 import axios from "axios"
-import { useHistory } from 'react-router-dom';
 import MainContext from '../store/main-ctx';
+import { useHistory } from 'react-router';
 
 const useStyles = makeStyles((theme) => ({
     root: {
         width: "39vw",
         marginTop: "10%",
         margin: "auto",
-        height: "357px",
+        height: "216px",
         padding: "30px"
     },
     margin: {
@@ -43,40 +43,31 @@ const useStyles = makeStyles((theme) => ({
     }
 }));
 
-export default function Signup() {
-    const history = useHistory()
+export default function Login() {
     const classes = useStyles()
-    const mainCtx = useContext(MainContext)
     const [email, setEmail] = useState("")
-    const [name, setName] = useState("")
     const [password, setPassword] = useState({
-    confirmPassword: '',
-    password: '',
-    showPassword: false,
+        password: '',
+        showPassword: false,
     });
+    const mainCtx = useContext(MainContext)
+    const history = useHistory()
 
     const signupFormSubmit = (event) => {
         event.preventDefault();
-        axios.post("http://localhost:8000/user/sign-up", {
+        axios.post("http://localhost:8000/user/login", {
             email: email,
-            name: name,
-            password: password.password,
-            confirmPassword: password.confirmPassword
+            password: password.password
         }).then(res => {
-            if (res.status == 201) {
-                console.log(res.data)
+            if (res.status == 200) {
                 mainCtx.handleLoginStatus(res.data)
-                history.push('/')
+                history.push("/")
             }
         })
     }
 
     const handleEmailChange = (event) => {
         setEmail(event.target.value)
-    }
-
-    const handleNameChange = (event) => {
-        setName(event.target.value)
     }
 
     const handleChange = (prop) => (event) => {
@@ -97,17 +88,10 @@ export default function Signup() {
                 <TextField
                     className={classes.input}
                     variant="outlined"
-                        label="Email"
-                        value={email}
-                        onChange={handleEmailChange}
-                    />
-                <TextField
-                    className={classes.input}
-                    variant="outlined"
-                        label="Name"
-                        value={name}
-                        onChange={handleNameChange}
-                    />
+                    label="Email"
+                    value={email}
+                    onChange={handleEmailChange}
+                />
                 <FormControl className={clsx(classes.margin, classes.textField), classes.input} variant="outlined">
                     <InputLabel htmlFor="password">Password</InputLabel>
                     <OutlinedInput
@@ -130,28 +114,6 @@ export default function Signup() {
                     labelWidth={70}
                     />
                 </FormControl>
-                <FormControl className={clsx(classes.margin, classes.textField), classes.input} variant="outlined">
-                    <InputLabel htmlFor="confirm-password">Confirm Password</InputLabel>
-                    <OutlinedInput
-                    id="confirm-password"
-                    type={password.showPassword ? 'text' : 'password'}
-                    value={password.confirmPassword}
-                    onChange={handleChange('confirmPassword')}
-                    endAdornment={
-                        <InputAdornment position="end">
-                        <IconButton
-                            aria-label="toggle password visibility"
-                            onClick={handleClickShowPassword}
-                            onMouseDown={handleMouseDownPassword}
-                            edge="end"
-                        >
-                            {password.showPassword ? <Visibility /> : <VisibilityOff />}
-                        </IconButton>
-                        </InputAdornment>
-                    }
-                    labelWidth={70}
-                    />
-                </FormControl>
                 <Button
                     variant="contained"
                         color="primary"
@@ -159,7 +121,7 @@ export default function Signup() {
                     className={classes["sign-btn"]}
                     to="/sign-up"
                 >
-                    <Typography variant="h6">Sign Up</Typography>
+                    <Typography variant="h6">Login</Typography>
                 </Button>
             </form>
         </Paper>

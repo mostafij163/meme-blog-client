@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import { useContext, useState } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import AppBar from '@material-ui/core/AppBar';
 import Toolbar from '@material-ui/core/Toolbar';
@@ -8,7 +8,8 @@ import AccountCircle from '@material-ui/icons/AccountCircle';
 import MenuItem from '@material-ui/core/MenuItem';
 import Menu from '@material-ui/core/Menu';
 import { Link } from "react-router-dom"
-import { Button } from '@material-ui/core';
+import { Button, Typography } from '@material-ui/core';
+import MainContext from '../store/main-ctx';
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -22,22 +23,19 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-export default function MenuAppBar() {
+export default function Header({loginStatus}) {
   const classes = useStyles();
-  const [auth, setAuth] = React.useState();
-  const [anchorEl, setAnchorEl] = React.useState(null);
+  const [anchorEl, setAnchorEl] = useState(null);
   const open = Boolean(anchorEl);
   const history = useHistory()
-
-  useEffect(() => {
-    setAuth(localStorage.getItem("user"))
-  }, [])
+  const mainCtx = useContext(MainContext)
 
   const handleMenu = (event) => {
     setAnchorEl(event.currentTarget);
   };
 
   const handleClose = () => {
+    mainCtx.handleLogout()
     setAnchorEl(null);
   };
 
@@ -45,8 +43,20 @@ export default function MenuAppBar() {
     <div className={classes.root}>
       <AppBar position="static">
         <Toolbar>
-              {
-            auth ?
+          <Typography variant="h5"
+            style={{
+              cursor: "pointer",
+              textDecoration: "none",
+              color: "#fff"
+            }} component={Link} to="/">
+            Meme Blog
+          </Typography>
+          <div style={{
+            marginLeft: "auto",
+            marginRight: "1rem"
+          }}>
+            {
+            loginStatus ?
               <div>
                 <IconButton
                   aria-label="account of current user"
@@ -95,15 +105,22 @@ export default function MenuAppBar() {
                   color="secondary"
                   onClick={() => {
                     history.push('/sign-up')
-                  }}
+                    }}
+                    style={{marginRight: "1rem"}}
                 >
                     Sign up
                   </Button>
-                      <Button variant="contained">
-                        Login
-                      </Button>
-                    </div>
+                <Button
+                  variant="contained"
+                  onClick={() => {
+                    history.push('/login')
+                    }}
+                >
+                    Login
+                  </Button>
+                </div>
               }
+              </div>
         </Toolbar>
       </AppBar>
     </div>
